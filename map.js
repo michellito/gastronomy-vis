@@ -3,15 +3,17 @@ var feature,
     svg,
     map;
 
-d3.json("data/data.json", function(error, data) {
+d3.json("data/yelp_restaurants.json", function(error, data) {
+    console.log(data)
     addLmaps();
-    draw(data);
+    draw(data.businesses);
 });
 
 
 function addLmaps(){
-    map = L.map('map').setView([40.703968742341544,-74.00532245635988], 14.5);
-    tileURL = 'https://api.mapbox.com/styles/v1/jiahao01121/cj187znxa00422rqutn78z87b/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamlhaGFvMDExMjEiLCJhIjoiY2l6bjI5ZHI1MDJkYzJxbzg1NXJmYWxvMSJ9.AhMpv-yiSAvqlo7bi2UBig'
+    map = L.map('map').setView([32.253460,-110.911789], 14.5);
+    tileURL = 'https://api.mapbox.com/styles/v1/michellito/ckn8ej6bk0f5017pbo1rg0d3c/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWljaGVsbGl0byIsImEiOiJja244YnR3aWYwN3ljMm5waWZpMHBlOXdmIn0.kqDL2Srx2HSgNODDENNJfg'
+
     L.tileLayer(tileURL, {
         // attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 15,
@@ -34,11 +36,9 @@ function draw(data){
     // feMerge.append('feMergeNode');
     // feMerge.append('feMergeNode').attr('in',"SourceGraphic");
 
-
-
     data.forEach(function(d){
-        if(d.lat && d.lng){
-            d.latlng = new L.LatLng(d.lat,d.lng)
+        if(d.coordindates){
+            d.latlng = new L.LatLng(d.coordindates.latitude,d.coordindates.longitude)
         }
     })
 
@@ -48,8 +48,8 @@ function draw(data){
         .append('circle')
         .style('opacity',.8)
         .style('fill',function(d){
-            var x = d3.scaleLinear().domain([0,100]).range([1,0]);
-            return d3.interpolateInferno(x(d.violation.recentScore))
+            var x = d3.scaleLinear().domain([0,5]).range([1,0]);
+            return d3.interpolateInferno(x(d.rating))
         })  
         .attr('r',radius)
         .on("mouseover", handleMouseOver)
