@@ -1,12 +1,12 @@
 var radius = 3;
+
 var feature,
     svg,
     map;
 
-d3.json("data/yelp_restaurants.json", function(error, data) {
-    console.log(data)
+d3.json("data/data.json", function(error, data) {
     addLmaps();
-    draw(data.businesses);
+    draw(data);
 });
 
 
@@ -30,15 +30,11 @@ function draw(data){
     filter.append('feOffset').attr('result','offOut').attr('in','SourceAlpha').attr('dx',1).attr('dy',4);
     filter.append('feGaussianBlur').attr('result','blurOut').attr('in',"offOut").attr('stdDeviation',1);
     filter.append('feBlend').attr('in','SourceGraphic').attr('in2','blurOut').attr('mode','normal')
-    // filter.append('feFlood').attr('flood-color',"rgba(0,0,0,0.9)");
-    // filter.append('feComposite').attr('in2','offsetblur').attr('operator','in');
-    // var feMerge = filter.append('feMerge');
-    // feMerge.append('feMergeNode');
-    // feMerge.append('feMergeNode').attr('in',"SourceGraphic");
 
     data.forEach(function(d){
-        if(d.coordindates){
-            d.latlng = new L.LatLng(d.coordindates.latitude,d.coordindates.longitude)
+
+        if (d.coordinates && d.coordinates.latitude && d.coordinates.longitude) {
+            d.latlng = new L.LatLng(d.coordinates.latitude, d.coordinates.longitude);
         }
     })
 
@@ -48,8 +44,8 @@ function draw(data){
         .append('circle')
         .style('opacity',.8)
         .style('fill',function(d){
-            var x = d3.scaleLinear().domain([0,5]).range([1,0]);
-            return d3.interpolateInferno(x(d.rating))
+            var x = d3.scaleLinear().domain([1,5]).range([1,0]);
+            return d3.interpolateViridis(x(d.rating))
         })  
         .attr('r',radius)
         .on("mouseover", handleMouseOver)

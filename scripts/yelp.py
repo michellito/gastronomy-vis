@@ -6,20 +6,25 @@ headers = {'Authorization': 'Bearer %s' % api_key}
 
 url = 'https://api.yelp.com/v3/businesses/search'
 
-params = {
-    'categories': 'food,restaurants',
-    'location': 'Tucson'
-}
+for i in range(0, 20):
+    offset = i * 50
 
-request = requests.get(
-    url,
-    params=params,
-    headers=headers
-)
+    params = {
+        'categories': 'food,restaurants',
+        'location': 'Tucson',
+        'limit': 50,
+        'offset': offset,
+    }
 
-request.raise_for_status()
+    request = requests.get(
+        url,
+        params=params,
+        headers=headers
+    )
 
-data = json.loads(request.text)
+    request.raise_for_status()
 
-with open('yelp_restaurants.json', 'w') as outfile:
-    json.dump(data, outfile)
+    data = json.loads(request.text)
+
+    with open('../data/yelp_' + str(offset) + '.json', 'w') as outfile:
+        json.dump(data['businesses'], outfile)
